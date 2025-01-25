@@ -12,27 +12,24 @@ export default {
           deepGreen: "#417154",
           darkGreen: "#104730",
         },
-        // Added new colors from uploaded image
         mutedPalette: {
           mutedBlue: "#7D91B1", 
-      
           sageGreen: "#B7B295",
-        
           beige: "#F0E4D3",
-        
           dustyMauve: "#B9A9AC", 
-        
           softTan: "#E2C3A5", 
         },
-        primaryGreen: {
-          light: "#d4e9d7", // Light green
-          DEFAULT: "#4CAF50", // Green
-          dark: "#2E7D32", // Dark green
-        },
-        primaryBrown: {
-          light: "#e7d9c4", // Light brown
-          DEFAULT: "#a07451", // Brown
-          dark: "#6a4f36", // Dark brown
+        earthTone: {
+          oliveGreen: "#556B2F",
+          charcoalGray: "#333333",
+          terracotta: "#E07A5F",
+          sandstoneBeige: "#D2B48C",
+          creamyWhite: "#FAF3E0",
+          clayBrown: "#A0522D",
+          forestGreen: "#2E8B57",
+          rustRed: "#8B4513",
+          stoneGray: "#A9A9A9",
+          goldenrod: "#DAA520",
         },
       },
     },

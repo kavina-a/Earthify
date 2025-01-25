@@ -2,6 +2,8 @@ const asyncHandler = require('express-async-handler');
 const Order = require('../models/orderModel');
 const Customer = require('../models/customerModel');
 const Product = require('../models/productModel');
+const mongoose = require('mongoose');
+const ServiceProvider = require('../models/serviceProviderModel');
 
 function calcPrices(orderItems) {
   const itemsPrice = orderItems.reduce(
@@ -132,29 +134,274 @@ const getCustomerOrders = asyncHandler( async( req, res) => {
 })
 
 //to get all orders for a specific service provider
+// const getServiceProviderOrders = asyncHandler(async (req, res) => {
+//   try {
+//     const userId = new mongoose.Types.ObjectId(req.user._id);
+
+//     // Find service provider by user ID
+//     const serviceProvider = await ServiceProvider.findOne({ user: userId });
+//     if (!serviceProvider) {
+//       return res.status(404).json({ message: "Service Provider not found" });
+//     }
+
+//     const serviceProviderId = serviceProvider._id;
+
+//     // Fetch orders where service provider is part of orderItems
+//     const orders = await Order.find({
+//       "orderItems.seller": serviceProviderId,
+//     });
+
+//     console.log('Orders:', JSON.stringify(orders, null, 2));
+
+//     // Helper function to filter orders based on status
+//     const filterOrders = (orders, filterFn) =>
+//       orders
+//         .map((order) => ({
+//           ...order._doc, // Spread other order properties
+//           orderItems: order.orderItems.filter((item) =>
+//             item.seller.toString() === serviceProviderId.toString() && filterFn(item)
+//           ),
+//         }))
+//         .filter((order) => order.orderItems.length > 0); // Remove orders with no matching items
+
+//     // Pending orders: isConfirmed = false, isDelivered = false
+//     const pendingOrders = filterOrders(
+//       orders,
+//       (item) =>  item.isDelivered === false
+//     );
+
+//     // Confirmed orders: isConfirmed = true, isDelivered = false
+//     const confirmedOrders = filterOrders(
+//       orders,
+//       (item) =>  item.isDelivered === false
+//     );
+
+//     // Completed orders: isConfirmed = true, isDelivered = true
+//     const completedOrders = filterOrders(
+//       orders,
+//       (item) => item.isDelivered === true
+//     );
+
+//     console.log({ pendingOrders, confirmedOrders, completedOrders });
+
+//     res.json({
+//       pendingOrders,
+//       confirmedOrders,
+//       completedOrders,
+//     });
+//   } catch (error) {
+//     console.error(error);
+//     res.status(400).json({ message: 'Error getting orders', error: error.message });
+//   }
+// });
+
 const getServiceProviderOrders = asyncHandler(async (req, res) => {
   try {
-    const serviceProviderId = req.user._id;
+    console.log("Starting getServiceProviderOrders...");
 
-    // Find all orders containing items for the service provider
-    const orders = await Order.find({
-      orderItems: { $elemMatch: { seller: serviceProviderId } },
+    // Extract the logged-in user's ID
+    const userId = new mongoose.Types.ObjectId(req.user._id);
+    console.log("Logged-in User ID:", userId);
+
+    // Find the Service Provider
+    const serviceProvider = await ServiceProvider.findOne({ user: userId }).select("_id");
+    if (!serviceProvider) {
+      console.log("Service Provider not found for User ID:", userId);
+      return res.status(404).json({
+        success: false,
+        message: "Service Provider not found.",
+      });
+    }
+    const serviceProviderId = serviceProvider._id;
+    console.log("Service Provider ID:", serviceProviderId);
+
+    // Fetch orders containing items related to this seller
+    console.log("Fetching orders for Service Provider ID:", serviceProviderId);
+    const sellerOrders = await Order.aggregate([
+      { $unwind: "$orderItems" }, // Break down orderItems array
+      {
+        $match: {
+          "orderItems.seller": serviceProviderId, // Match the logged-in seller
+        },
+      },
+      {
+        $group: {
+          _id: "$_id",
+          customer: { $first: "$customer" },
+          shippingAddress: { $first: "$shippingAddress" },
+          paymentMethod: { $first: "$paymentMethod" },
+          itemsPrice: { $first: "$itemsPrice" },
+          taxPrice: { $first: "$taxPrice" },
+          shippingPrice: { $first: "$shippingPrice" },
+          totalPrice: { $first: "$totalPrice" },
+          finalPrice: { $first: "$finalPrice" },
+          isPaid: { $first: "$isPaid" },
+          isConfirmed: { $first: "$isConfrimed" },
+          paidAt: { $first: "$paidAt" },
+          isDelivered: { $first: "$isDelivered" },
+          deliveredAt: { $first: "$deliveredAt" },
+          orderItems: { $push: "$orderItems" },
+        },
+      },
+      {
+        $project: {
+          _id: 1,
+          customer: 1,
+          shippingAddress: 1,
+          paymentMethod: 1,
+          itemsPrice: 1,
+          taxPrice: 1,
+          shippingPrice: 1,
+          totalPrice: 1,
+          finalPrice: 1,
+          isPaid: 1,
+          isConfirmed: 1,
+          paidAt: 1,
+          isDelivered: 1,
+          deliveredAt: 1,
+          orderItems: {
+            $filter: {
+              input: "$orderItems",
+              as: "item",
+              cond: { $eq: ["$$item.seller", serviceProviderId] },
+            },
+          },
+        },
+      },
+      {
+        $facet: {
+          paid: [
+            {
+              $match: { isPaid: true, isDelivered: false },
+            },
+          ],
+          delivered: [
+            {
+              $match: { isDelivered: true },
+            },
+          ],
+        },
+      },
+    ]);
+
+    // Log the intermediate result from the aggregation
+    console.log("Aggregated Seller Orders:", JSON.stringify(sellerOrders, null, 2));
+
+    res.status(200).json({
+      success: true,
+      orders: sellerOrders[0] || { paid: [], delivered: [] },
     });
-
-    // Filter orderItems to include only those matching the service provider
-    const filteredOrders = orders.map((order) => ({
-      ...order._doc, // Spread other order properties
-      orderItems: order.orderItems.filter(
-        (item) => item.seller.toString() === serviceProviderId.toString()
-      ),
-    }));
-
-    res.json(filteredOrders);
   } catch (error) {
-    console.log(error);
-    res.status(400).json({ message: 'Error getting orders', error: error.message });
+    console.error("Error fetching seller orders:", error);
+    res.status(500).json({
+      success: false,
+      message: "Unable to fetch orders for the service provider.",
+    });
   }
 });
+
+const getServiceProviderOrderById = asyncHandler(async (req, res) => {
+  try {
+    console.log("Starting getServiceProviderOrderById...");
+
+    // Extract the logged-in user's ID and order ID from request
+    const userId = new mongoose.Types.ObjectId(req.user._id);
+    const orderId = req.params.orderId;
+    console.log("Logged-in User ID:", userId);
+    console.log("Order ID:", orderId);
+
+    // Find the Service Provider
+    const serviceProvider = await ServiceProvider.findOne({ user: userId }).select("_id");
+    if (!serviceProvider) {
+      console.log("Service Provider not found for User ID:", userId);
+      return res.status(404).json({
+        success: false,
+        message: "Service Provider not found.",
+      });
+    }
+    const serviceProviderId = serviceProvider._id;
+    console.log("Service Provider ID:", serviceProviderId);
+
+    // Fetch the order containing items related to this seller
+    console.log("Fetching order for Service Provider ID:", serviceProviderId);
+    const sellerOrder = await Order.aggregate([
+      { $match: { _id: new mongoose.Types.ObjectId(orderId) } }, // Match specific order ID
+      { $unwind: "$orderItems" }, // Break down orderItems array
+      {
+        $match: {
+          "orderItems.seller": serviceProviderId, // Match the logged-in seller
+        },
+      },
+      {
+        $group: {
+          _id: "$_id",
+          customer: { $first: "$customer" },
+          shippingAddress: { $first: "$shippingAddress" },
+          paymentMethod: { $first: "$paymentMethod" },
+          itemsPrice: { $first: "$itemsPrice" },
+          taxPrice: { $first: "$taxPrice" },
+          shippingPrice: { $first: "$shippingPrice" },
+          totalPrice: { $first: "$totalPrice" },
+          finalPrice: { $first: "$finalPrice" },
+          isPaid: { $first: "$isPaid" },
+          isConfirmed: { $first: "$isConfirmed" },
+          paidAt: { $first: "$paidAt" },
+          isDelivered: { $first: "$isDelivered" },
+          deliveredAt: { $first: "$deliveredAt" },
+          orderItems: { $push: "$orderItems" },
+        },
+      },
+      {
+        $project: {
+          _id: 1,
+          customer: 1,
+          shippingAddress: 1,
+          paymentMethod: 1,
+          itemsPrice: 1,
+          taxPrice: 1,
+          shippingPrice: 1,
+          totalPrice: 1,
+          finalPrice: 1,
+          isPaid: 1,
+          isConfirmed: 1,
+          paidAt: 1,
+          isDelivered: 1,
+          deliveredAt: 1,
+          orderItems: {
+            $filter: {
+              input: "$orderItems",
+              as: "item",
+              cond: { $eq: ["$$item.seller", serviceProviderId] },
+            },
+          },
+        },
+      },
+    ]);
+
+    // If no order is found
+    if (!sellerOrder.length) {
+      console.log("Order not found or not associated with the Service Provider.");
+      return res.status(404).json({
+        success: false,
+        message: "Order not found or not associated with the Service Provider.",
+      });
+    }
+
+    // Return the fetched order
+    console.log("Fetched Order:", sellerOrder[0]);
+    res.status(200).json({
+      success: true,
+      order: sellerOrder[0],
+    });
+  } catch (error) {
+    console.error("Error in getServiceProviderOrderById:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server error. Please try again later.",
+    });
+  }
+});
+
 
 const findOrderById = async (req, res) => {
   try {
@@ -232,6 +479,31 @@ const getShippingAddress = asyncHandler(async (req, res) => {
 }
 );
 
+const updateDelivery = asyncHandler(async (req, res) => { 
+  try {
+
+    const order = await Order.findById(req.params.orderId);
+
+    if (!order) {
+      return res.status(404).json({ success: false, message: 'Order not found' });
+    }
+
+    order.isDelivered = !order.isDelivered;
+    order.deliveredAt = order.isDelivered ? Date.now() : null;
+  
+    const updatedOrder = await order.save();
+
+    res.status(200).json({
+      success: true,
+      order: updatedOrder,
+    });
+
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+}
+);
+
 const getTopSellingProducts = async (req, res) => {
   try {
     const topProducts = await Order.aggregate([
@@ -261,6 +533,7 @@ const getTopSellingProducts = async (req, res) => {
           category: "$productDetails.category",
           price: "$productDetails.price",
           image: "$productDetails.image",
+          id: "$productDetails._id",
         },
       },
     ]);
@@ -307,6 +580,7 @@ const getTopSellingCategories = async (req, res) => {
           _id: 0, // Exclude the _id field
           category: "$categoryDetails.name",
           totalSold: 1,
+          productIds: 1,
         },
       },
     ]);
@@ -329,5 +603,7 @@ module.exports = { createOrder,
                    markOrderAsDelivered, 
                    getShippingAddress,
                    getTopSellingProducts,
-                   getTopSellingCategories
+                   getTopSellingCategories,
+                   getServiceProviderOrderById,
+                   updateDelivery
                   };

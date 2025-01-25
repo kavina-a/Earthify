@@ -3,7 +3,7 @@ const formidable = require('express-formidable');
 const router = express.Router();
 
 const authenticate = require('../middlewares/authMiddleware.js');
-const { createProduct, updateProduct, removeProduct, getProducts, getProductById, getAllProducts, createReview,getTopProducts, getNewProducts, getProductsBySeller,getFilteredProducts, addToFavorites, removeFromFavorites, getFavorites} = require('../controllers/productController.js')
+const { createProduct, updateProduct, removeProduct, getProducts, getProductById, getAllProducts,getProductsByCategory, createReview,getTopProducts, getNewProducts, getProductsBySeller,getFilteredProducts, addToFavorites, removeFromFavorites, getFavorites} = require('../controllers/productController.js')
 const { uploadSingleImage } = require('../utils/upload.js');
 
 // router.route('/create').post(authenticate("serviceProvider"), formidable(), createProduct)
@@ -15,6 +15,8 @@ router.route('/delete/:productId').delete(authenticate("serviceProvider"), remov
 router.route('/all6').get(authenticate("serviceProvider"), getProducts)
 router.route('/detail/:productId').get(authenticate(["serviceProvider", "customer"]), getProductById)
 router.route('/all').get(authenticate("serviceProvider"), getAllProducts)
+router.route('/category/:category/exclude/:excludeProductId').get(authenticate("customer"), getProductsByCategory);
+
 
 //get all products listed by a particular seller
 router.route('/list').get(authenticate("serviceProvider"), getProductsBySeller)

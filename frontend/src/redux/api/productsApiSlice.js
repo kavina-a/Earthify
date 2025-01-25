@@ -40,6 +40,13 @@ export const productApiSlice = apiSlice.injectEndpoints({
 
         }),
 
+        getProductsByCategory: builder.query({
+            query: ({ category, excludeProductId }) => ({
+                url: `${PRODUCTS_URL}/category/${category}/exclude/${excludeProductId}`,
+                method: 'GET',
+            }),
+        }),
+
         createProduct: builder.mutation({
             query: (productData) => ({
                 url: `${PRODUCTS_URL}/create`,
@@ -136,7 +143,8 @@ export const {
     useGetFilteredProductsQuery,
     useAddToFavoritesMutation,
     useRemoveFromFavoritesMutation,
-    useGetFavoritesQuery
+    useGetFavoritesQuery,
+    useGetProductsByCategoryQuery
              } = productApiSlice;
 
 

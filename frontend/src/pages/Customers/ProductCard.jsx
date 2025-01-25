@@ -33,38 +33,40 @@ const ProductCard = ({ p }) => {
   };
 
   return (
-    <div className="max-w-sm relative bg-mutedPalette-mutedBlue text-mutedPalette-beige rounded-lg shadow-lg transform hover:scale-105 transition-transform duration-300">
+    <Link
+      to={`/customer/product/${p._id}`}
+      className="block max-w-sm relative bg-mutedPalette-mutedBlue text-mutedPalette-beige rounded-lg shadow-lg transform hover:scale-105 transition-transform duration-300"
+    >
       {/* Product Image Section */}
       <section className="relative group">
         {/* Heart icon button at the top-left corner */}
         <button
           type="button"
-          onClick={() => handleAddToFavorites(p._id)}
+          onClick={(e) => {
+            e.preventDefault(); // Prevent navigation when clicking the button
+            handleAddToFavorites(p._id);
+          }}
           disabled={isAddingToFavorites}
           className="absolute top-3 left-3 bg-mutedPalette-softTan p-2 rounded-full shadow-lg hover:bg-mutedPalette-beige transition-colors duration-300"
         >
           <AiOutlineHeart className="text-mutedPalette-beige" size={20} />
         </button>
 
-        <Link to={`customer/product/detail/${p._id}`}>
-          <span className="absolute top-3 right-3 bg-mutedPalette-softTan text-mutedPalette-beige text-xs font-medium px-2.5 py-0.5 rounded-full shadow-lg">
-            {p?.brand}
-          </span>
-          <img
-            className="cursor-pointer w-full h-48 object-cover rounded-t-lg"
-            src={p.image}
-            alt={p.name}
-          />
-        </Link>
+        <span className="absolute top-3 right-3 bg-mutedPalette-softTan text-mutedPalette-beige text-xs font-medium px-2.5 py-0.5 rounded-full shadow-lg">
+          {p?.brand}
+        </span>
+        <img
+          className="cursor-pointer w-full h-48 object-cover rounded-t-lg"
+          src={p.image}
+          alt={p.name}
+        />
       </section>
 
       {/* Product Info */}
       <div className="p-4">
         <div className="flex justify-between items-center">
           {/* Product Name */}
-          <h5 className="text-lg font-semibold text-mutedPalette-beige">
-            {p?.name}
-          </h5>
+          <h5 className="text-lg font-semibold text-mutedPalette-beige">{p?.name}</h5>
 
           {/* Product Price */}
           <p className="text-mutedPalette-dustyMauve font-bold">
@@ -80,28 +82,23 @@ const ProductCard = ({ p }) => {
           {p?.description?.substring(0, 60)}...
         </p>
 
-        {/* Actions: Read More & Add to Cart */}
-        <section className="flex justify-between items-center mt-4">
-          {/* <Link
-            to={`/product/${p._id}`}
-            className="inline-flex items-center px-4 py-2 text-sm font-medium bg-mutedPalette-mutedBlue hover:bg-mutedPalette-dustyMauve text-white rounded-lg shadow-md transition-colors duration-300"
-          >
-            Read More
-          </Link> */}
-
-          <button
-            className="p-2 bg-mutedPalette-mutedBlue text-mutedPalette-beige rounded-full shadow-md hover:bg-mutedPalette-beige hover:text-mutedPalette-mutedBlue transition-colors duration-300"
-            onClick={() => addToCartHandler(p, 1)}
-          >
-            <AiOutlineShoppingCart size={24} />
-          </button>
-        </section>
+        {/* Add to Cart Button */}
+        <button
+          className="p-2 bg-mutedPalette-mutedBlue text-mutedPalette-beige rounded-full shadow-md hover:bg-mutedPalette-beige hover:text-mutedPalette-mutedBlue transition-colors duration-300 mt-4"
+          onClick={(e) => {
+            e.preventDefault(); // Prevent navigation when clicking the button
+            addToCartHandler(p, 1);
+          }}
+        >
+          <AiOutlineShoppingCart size={24} />
+        </button>
       </div>
-    </div>
+    </Link>
   );
 };
 
 export default ProductCard;
+
 // import { Link } from "react-router-dom";
 // import { AiOutlineShoppingCart } from "react-icons/ai";
 // import { useDispatch } from "react-redux";

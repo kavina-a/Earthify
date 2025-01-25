@@ -9,6 +9,7 @@ import {
   useGetTopSellingProductsQuery,
 } from "../../redux/api/orderApiSlice";
 import Footer from "../../components/Footer";
+import { Link } from "react-router-dom";
 
 const Home = () => {
   const slides = [
@@ -24,7 +25,7 @@ const Home = () => {
   const { data: profileData, isLoading: profileLoading, error: profileError } = useCurrentProfileQuery();
   const { data: topCategories, isLoading: topCategoriesLoading, error: topCategoriesError } = useGetTopSellingCategoriesQuery();
   const { data: topProducts, isLoading: topProductsLoading, error: topProductsError } = useGetTopSellingProductsQuery();
-
+  console.log(topProducts)
   const goToNext = () => {
     const newIndex = currentIndex === slides.length - 1 ? 0 : currentIndex + 1;
     setCurrentIndex(newIndex);
@@ -100,11 +101,12 @@ const Home = () => {
                 <h3 className="font-bold text-lg mt-2">{product.product}</h3>
                 <p className="text-gray-600">Sold: {product.totalSold}</p>
                 <p className="text-gray-600">Price: ${product.price}</p>
-                <button
-                  className="mt-2 bg-mutedPalette-mutedBlue text-mutedPalette-beige px-4 py-2 rounded-md hover:bg-green-800"
-                >
-                  View Details
-                </button>
+                            <Link
+              to={`/customer/product/${product.id}`} 
+              className="mt-2 bg-mutedPalette-mutedBlue text-mutedPalette-beige px-4 py-2 rounded-md hover:bg-green-800"
+            >
+              View Details
+            </Link>
               </div>
             ))}
         </div>

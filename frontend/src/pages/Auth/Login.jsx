@@ -8,6 +8,8 @@ import { useLoginMutation } from '../../redux/api/usersApiSlice';
 const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    console.log("email:", email);
+    console.log("password,", password );
 
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -18,15 +20,21 @@ const Login = () => {
     
     const { search } = useLocation();
     const sp = new URLSearchParams(search);
-    const redirect = sp.get('redirect') || '/customer/home';
-
+    const redirect = sp.get('redirect') 
+    
     useEffect(() => {
-        console.log("userInfo:", userInfo);
-        if (userInfo) {
-            console.log("Navigating to:", redirect);
-            navigate(redirect);
+        if (!userInfo) {
+          // If userInfo is not present, redirect to login
+          navigate('/login');
+        } else {
+          // Check user role and redirect accordingly
+          if (userInfo.role === 'customer') {
+            navigate(redirect || '/customer/home'); // Redirect customer
+          } else if (userInfo.role === 'serviceProvider') {
+            navigate(redirect || '/service-provider/home'); // Redirect service provider
+          }
         }
-    }, [navigate, redirect, userInfo]);
+      }, [userInfo, redirect, navigate]);
 
     const submitHandler = async (e) => {
         e.preventDefault(); 

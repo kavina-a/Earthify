@@ -5,7 +5,10 @@ import authReducer from "./features/auth/authSlice";
 import cartSlideReducer from "./features/cart/cartSlice";
 import shopSliceReeducer from "./features/shop/shopSlice";
 
-//was told that i dont need to think about this alot, but this is essential ( the reducer part and the middleware part)
+//the store is the central place where the state of your application is managed.
+//It holds the state, allows access to the state,
+//and lets you update the state via actions and reducers.
+
 const store = configureStore ({
     reducer : {
         [apiSlice.reducerPath]: apiSlice.reducer, //

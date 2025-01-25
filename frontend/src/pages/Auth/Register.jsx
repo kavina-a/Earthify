@@ -103,7 +103,7 @@ const Register = () => {
        try {
         const res = await registerCustomer(payload).unwrap()
         dispatch(setCredentials({...res}))
-        navigate(redirect)
+        navigate("/service-provider/productlist")
         toast.success('Account created successfully')
        }
        catch(error) {

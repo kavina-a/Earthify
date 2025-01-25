@@ -23,11 +23,14 @@ import SuccessPage from './pages/Customers/SuccessPage';
 import PendingOrders from './pages/ServiceProviders/PendingOrders';
 import Home from './pages/Customers/Home';
 import Favorites from './pages/Customers/Favorites';
+import DashboardHome from './pages/ServiceProviders/Home';
+import Products from './pages/ServiceProviders/Products';
+import OrderDetail from './pages/ServiceProviders/OrderDetail';
 
 // Create router with routes
 const router = createBrowserRouter([
   {
-    path: "/",
+    path: "/",  
     element: <App />,
     children: [
       {
@@ -67,6 +70,9 @@ const router = createBrowserRouter([
           { path: "allproducts", element: < AllProducts/> },
           { path: "product/update/:_id", element: <ProductUpdate /> },
           { path: "pendingorders", element: <PendingOrders /> },
+          { path: "home", element: <DashboardHome /> },
+          { path: "products", element: <Products /> },
+          { path: "order/:orderId", element: <OrderDetail /> },
         ],
       },
       {

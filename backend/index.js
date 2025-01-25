@@ -12,6 +12,7 @@ const productRoutes = require('./routes/productRoutes.js');
 // const uploadRoutes = require('./routes/uploadRoutes.js')
 const orderRoutes = require('./routes/orderRoutes.js');
 const stripeRoute = require('./routes/stripeRoute.js');
+const sellerRoutes = require('./routes/sellerRoutes.js');
 
 // Utilities
 const connectDB = require('./config/db.js');
@@ -38,6 +39,7 @@ app.use("/api/product", productRoutes)
 // app.use("/api/uploads", uploadRoutes)
 app.use("/api/order", orderRoutes);
 app.use("/api/stripe", stripeRoute);
+app.use("/api/seller", sellerRoutes);
 
 // const __dirname = path.resolve();
 // app.use("/uploads", express.static(path.join(__dirname + "/uploads")));

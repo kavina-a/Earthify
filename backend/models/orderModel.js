@@ -75,6 +75,12 @@ const orderSchema = new mongoose.Schema(
       default: false,
     },
 
+    isConfrimed: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
+
     paidAt: {
       type: Date,
     },

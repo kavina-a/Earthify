@@ -107,39 +107,61 @@ const createServiceProvider = asyncHandler(async (req, res) => {
 });
 
 
-const loginUser = asyncHandler( async (req,res) => {
-
+const loginUser = asyncHandler(async (req, res) => {
   try {
-    const {email,password } = req.body
+    const { email, password } = req.body;
 
-    const existingUser = await User.findOne({email})
-    const existingCustomer = await Customer.findOne({user: existingUser._id})
+    // Find the user by email
+    const existingUser = await User.findOne({ email });
 
-      if (!existingUser) {
-        return res.status(400).json({ message: 'Invalid email or password' });
+    if (!existingUser) {
+      return res.status(400).json({ message: 'Invalid email or password' });
+    }
+
+    // Check if the password is correct
+    const isMatch = await bcrypt.compare(password, existingUser.password);
+
+    if (!isMatch) {
+      console.log("Password mismatch for email:", email);
+      return res.status(400).json({ message: 'Invalid email or password' });
+    }
+
+    // Check the user's role
+    if (existingUser.role === 'customer') {
+      // If the user is a customer, find their customer details
+      const existingCustomer = await Customer.findOne({ user: existingUser._id });
+
+      if (!existingCustomer) {
+        return res.status(400).json({ message: 'Customer details not found' });
       }
-
-      // Check if the password is correct
-      const isMatch = await bcrypt.compare(password, existingUser.password);
-
-      if (!isMatch) {
-        console.log("Password mismatch for email:", email); 
-        return res.status(400).json({ message: 'Invalid email or password' });
-      }
-
-      console.log(existingUser.role);
-    
 
       createToken(res, existingUser._id, existingUser.role);
 
-      res.status(201).json({ userId: existingUser._id,email: existingUser.email, ecoPoints: existingCustomer.ecoPoints});
-      // res.status(201).json({ userId: existingUser._id,email: existingUser.email, ecoPoints: existingCustomer.ecoPoints});
+      return res.status(200).json({
+        userId: existingUser._id,
+        email: existingUser.email,
+        role: existingUser.role,
+        ecoPoints: existingCustomer.ecoPoints,
+      });
+    } else if (existingUser.role === 'serviceProvider') {
+      // Handle login for service providers (no ecoPoints)
+      createToken(res, existingUser._id, existingUser.role);
 
-    } catch (err) {
-      console.error("Error during login:", err);  
-      res.status(500).json({ error: err.message });
+      return res.status(200).json({
+        userId: existingUser._id,
+        email: existingUser.email,
+        role: existingUser.role,
+        message: 'Logged in as a service provider',
+      });
+    } else {
+      return res.status(400).json({ message: 'Invalid user role' });
     }
-  });
+  } catch (err) {
+    console.error("Error during login:", err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
   
 
   const logoutUser = asyncHandler( async(req,res) => {
@@ -263,24 +285,47 @@ const loginUser = asyncHandler( async (req,res) => {
 
   const getCurrentProfile = asyncHandler(async (req, res) => { 
     
-    const user = await User.findById(req.user._id);
-
-    const customer = await Customer.findOne({user: user._id});
-
-    if(user) {
-      res.json({
-        _id: user._id,
-        email: user.email,
-        role: user.role,
-        firstName: customer.firstName,
-      });
-    } else {
-      throw new Error("User not found")
+    try {
+      // Fetch the user from the database
+      const user = await User.findById(req.user._id);
+  
+      if (!user) {
+        res.status(404);
+        throw new Error("User not found");
+      }
+  
+      // Check if the user is a customer
+      const customer = await Customer.findOne({ user: user._id });
+  
+      // Check if the user is a seller
+      const seller = await ServiceProvider.findOne({ user: user._id });
+  
+      if (customer) {
+        // Respond with customer-specific fields
+        res.json({
+          _id: user._id,
+          email: user.email,
+          role: user.role,
+          firstName: customer.firstName || "N/A", // Safe access to firstName
+        });
+      } else if (seller) {
+        // Respond with seller-specific fields
+        res.json({
+          _id: user._id,
+          email: user.email,
+          role: user.role,
+          businessName: seller.businessName || "N/A", // Seller's business name
+        });
+      } else {
+        res.status(404);
+        throw new Error("User role not found");
+      }
+    } catch (error) {
+      console.error("Error fetching user profile:", error.message);
+      res.status(500).json({ message: "Internal Server Error" });
     }
   });
 
-
-  
 
 
 module.exports = { createCustomer , createServiceProvider, loginUser, logoutUser, getCurrentUserProfile, updateCurrentUserProfile, deleteUser, getEcoPoints, getCurrentProfile }

@@ -53,8 +53,6 @@ const createProduct = asyncHandler(async (req, res) => {
     }
   });
   
-  // Exporting the createProduct controller
-  module.exports = createProduct;
   const updateProduct = asyncHandler(async (req, res) => {
     try {
       const { productId } = req.params;
@@ -116,7 +114,7 @@ const createProduct = asyncHandler(async (req, res) => {
               res.status(500).json({error: "Server Error"});
           }
 
-  });
+  }); 
 
 const getProducts = asyncHandler( async(req,res ) => {
     try {
@@ -198,6 +196,28 @@ const getProductsBySeller = asyncHandler( async(req,res) => {
     }
 });
 
+const getProductsByCategory = asyncHandler(async (req, res) => {
+  try {
+      const { category, excludeProductId } = req.params; // Get category and product ID to exclude
+      console.log(`Category: ${category}, Exclude Product ID: ${excludeProductId}`);
+
+      // Find all products that match the specified category but exclude the specified product
+      const products = await Product.find({
+          category,
+          _id: { $ne: excludeProductId }, // Exclude the product with the given ID
+      });
+
+      if (products.length === 0) {
+          return res.status(404).json({ message: "No products found for the given category." });
+      }
+
+      res.json(products);
+  } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: `Error when getting products by category: ${error.message}` });
+  }
+});
+
 const createReview =asyncHandler( async(req,res) => {
     try{
         const {rating, comment} = req.body 
@@ -232,7 +252,7 @@ const createReview =asyncHandler( async(req,res) => {
 const getTopProducts = asyncHandler( async(req,res) => {
     try{
         const products = await Product.find({}).sort({rating: -1}).limit(4);
-
+        res.json(products)
     }catch(error){
         console.log(error);
         res.status(400).json(error.message)
@@ -368,4 +388,4 @@ const removeFromFavorites = asyncHandler(async (req, res) => {
   }
 });
 
-module.exports = { createProduct, updateProduct, removeProduct, getProducts, getProductById, getAllProducts, createReview,getTopProducts, getNewProducts, getProductsBySeller, getFilteredProducts, addToFavorites, removeFromFavorites, getFavorites}
+module.exports = { createProduct, updateProduct, removeProduct, getProducts, getProductById, getAllProducts, createReview,getTopProducts, getNewProducts, getProductsBySeller, getFilteredProducts, addToFavorites,getProductsByCategory, removeFromFavorites, getFavorites}

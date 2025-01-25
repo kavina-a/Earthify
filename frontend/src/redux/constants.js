@@ -5,5 +5,6 @@ export const PRODUCTS_URL = '/api/product';
 export const UPLOAD_URL = '/api/uploads';
 export const ORDERS_URL = '/api/order';
 export const STRIPE_URL = '/api/stripe';
+export const SELLER_URL = '/api/seller';
 
 export const STRIPE_PUBLISHABLE_KEY = 'pk_test_51Q5MsnKcg0aY6eUJ57igd8egjQBvGBfi6A8dhkvhXz0hGL9JgrkTQegIbwmuTcFCIvKCQeEsB5RtQrHe4SMjntOI0092wwr405';
