@@ -20,36 +20,11 @@ dotenv.config();
 // Create Express app
 const app = express();
 
-// Define allowed origins
-const allowedOrigins = [
-    'https://earthifyy.vercel.app', // Frontend production domain
-    'http://localhost:3000',       // Frontend development domain
-];
-
 // Apply CORS middleware
 app.use(cors({
-    origin: (origin, callback) => {
-        // Allow requests with no origin (e.g., mobile apps, server-to-server)
-        if (!origin) return callback(null, true);
-
-        if (allowedOrigins.includes(origin)) {
-            callback(null, true); // Allow the origin
-        } else {
-            callback(new Error(`CORS policy does not allow access from origin: ${origin}`));
-        }
-    },
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Allowed methods
-    credentials: true, // Allow credentials (cookies, etc.)
+    origin: ['https://earthify-backend.onrender.com', 'http://localhost:3000'], 
+    credentials: true, 
 }));
-
-// Handle preflight requests
-app.options('*', (req, res) => {
-    res.header('Access-Control-Allow-Origin', req.headers.origin || '*');
-    res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
-    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-    res.header('Access-Control-Allow-Credentials', 'true');
-    res.sendStatus(200);
-});
 
 // Middleware
 app.use(express.json());
