@@ -4,7 +4,6 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import App from './App';
 import { Provider } from 'react-redux';
 import store from './redux/store';
-import Test from './pages/Auth/Test';
 import Login from './pages/Auth/Login';
 import Register from './pages/Auth/Register';  
 import PrivateRoute from './components/PrivateRoute';
@@ -33,10 +32,6 @@ const router = createBrowserRouter([
     path: "/",  
     element: <App />,
     children: [
-      {
-        path: "test",
-        element: <Test />,
-      },
       {
         path: "login",
         element: <Login />,
