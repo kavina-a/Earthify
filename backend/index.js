@@ -20,6 +20,18 @@ const { log } = console;
 
 dotenv.config();
 
+const allowedOrigins = [
+    'https://earthifyy.vercel.app',
+    'http://localhost:5001', 
+];
+
+app.use(cors({
+    origin: allowedOrigins,
+    methods: ['GET', 'POST', 'PUT', 'DELETE'], 
+    credentials: true, 
+}));
+
+
 const port = process.env.PORT || 5000;
 
 // Connect to the database
