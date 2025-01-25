@@ -2,7 +2,7 @@ const isDevelopment = !process.env.NODE_ENV || process.env.NODE_ENV === 'develop
 
 export const BASE_URL = isDevelopment
   ? 'http://localhost:5001'
-  : 'https://earthify-backend.vercel.app'; 
+  : 'https://earthify-backend.onrender.com'; 
 
 export const USERS_URL = `${BASE_URL}/api/users`;
 export const CATEGORY_URL = `${BASE_URL}/api/category`;
