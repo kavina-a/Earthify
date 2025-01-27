@@ -23,6 +23,7 @@ const Home = () => {
 
   const { data: ecoPointsData, isLoading: ecoPointsLoading, error: ecoPointsError } = useEcoPointsQuery();
   const { data: profileData, isLoading: profileLoading, error: profileError } = useCurrentProfileQuery();
+  console.log(profileData)
   const { data: topCategories, isLoading: topCategoriesLoading, error: topCategoriesError } = useGetTopSellingCategoriesQuery();
   const { data: topProducts, isLoading: topProductsLoading, error: topProductsError } = useGetTopSellingProductsQuery();
   console.log(topProducts)
