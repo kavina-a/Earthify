@@ -10,11 +10,14 @@ const generateToken = ( res, userId, role ) => {
     res.cookie('jwt', token, {
         httpOnly: true, //cookie can ony be accessed by http requests 
         secure: process.env.NODE_ENV !== 'development',
-        sameSite: 'strict',
+        sameSite: 'None',
         maxAge: 30 * 24 * 60 * 60 * 1000
     })
+
+    console.log(`token is ${token}`)
     
     return token;
+
 };
 
 module.exports = generateToken

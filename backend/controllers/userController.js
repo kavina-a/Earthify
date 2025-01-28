@@ -274,6 +274,9 @@ const loginUser = asyncHandler(async (req, res) => {
   })
 
   const getEcoPoints = asyncHandler(async(req,res) => {
+    const token = req.cookies.jwt;
+    console.log(token)
+
     const user = await User.findById(req.user._id);
     const customer = await Customer.findOne({user: user._id});
 

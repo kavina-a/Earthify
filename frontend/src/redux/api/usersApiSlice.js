@@ -9,7 +9,7 @@ export const userApiSlice = apiSlice.injectEndpoints({
             query: (data) => ({
                 url: `${USERS_URL}/auth`, //this is the url that the request is going to
                 method: 'POST',
-                body: data
+                body: data,
             })
         }), 
         logout: builder.mutation({
@@ -48,7 +48,8 @@ export const userApiSlice = apiSlice.injectEndpoints({
         ecoPoints: builder.query({
             query: () => ({
                 url: `${USERS_URL}/eco-points`,
-                method: 'GET'
+                method: 'GET',
+                credentials: 'include',
             })
         })
 })
