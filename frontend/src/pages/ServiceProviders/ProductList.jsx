@@ -112,34 +112,36 @@ const ProductList = () => {
         <div className="mb-6">
           <label className="block text-lg font-medium text-greenPalette-deepGreen mb-2">Select Category</label>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
-            {categoriesLoading ? (
-              <p className="text-mutedPalette-dustyMauve">Loading categories...</p>
-            ) : (
-              categories.map((cat) => (
+          {categoriesLoading ? (
+            <p className="text-mutedPalette-dustyMauve">Loading categories...</p>
+          ) : categories && categories.length > 0 ? (
+            categories.map((cat) => (
+              <div
+                key={cat._id}
+                onClick={() => setCategory(cat._id)}
+                className={`cursor-pointer rounded-lg border shadow-sm overflow-hidden hover:shadow-md transition-all ${
+                  category === cat._id
+                    ? "border-greenPalette-deepGreen"
+                    : "border-mutedPalette-dustyMauve"
+                }`}
+              >
+                <img
+                  src={`http://localhost:5001${cat.image}`}
+                  alt={cat.name}
+                  className="w-full h-24 object-cover"
+                />
                 <div
-                  key={cat._id}
-                  onClick={() => setCategory(cat._id)}
-                  className={`cursor-pointer rounded-lg border shadow-sm overflow-hidden hover:shadow-md transition-all ${
-                    category === cat._id
-                      ? "border-greenPalette-deepGreen"
-                      : "border-mutedPalette-dustyMauve"
+                  className={`p-2 text-center font-medium ${
+                    category === cat._id ? "text-greenPalette-darkGreen" : "text-mutedPalette-dustyMauve"
                   }`}
                 >
-                  <img
-                    src={`http://localhost:5001${cat.image}`}
-                    alt={cat.name}
-                    className="w-full h-24 object-cover"
-                  />
-                  <div
-                    className={`p-2 text-center font-medium ${
-                      category === cat._id ? "text-greenPalette-darkGreen" : "text-mutedPalette-dustyMauve"
-                    }`}
-                  >
-                    {cat.name}
-                  </div>
+                  {cat.name}
                 </div>
-              ))
-            )}
+              </div>
+            ))
+          ) : (
+            <p className="text-mutedPalette-dustyMauve">No categories available.</p>
+          )}
           </div>
         </div>
 
