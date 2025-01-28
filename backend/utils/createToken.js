@@ -9,7 +9,7 @@ const generateToken = ( res, userId, role ) => {
     //!check on this again
     res.cookie('jwt', token, {
         httpOnly: true, //cookie can ony be accessed by http requests 
-        secure: process.env.NODE_ENV !== 'development',
+        secure: 'None',
         sameSite: 'None',
         maxAge: 30 * 24 * 60 * 60 * 1000
     })
