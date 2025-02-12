@@ -22,7 +22,9 @@ const app = express();
 
 // Apply CORS middleware
 app.use(cors({
-    origin: ['https://earthify-frontend.onrender.com', 'http://localhost:5173'], 
+    origin: 'https://teal-taffy-af2df9.netlify.app', 
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    // origin: 'http://localhost:5173',
     credentials: true, 
 }));
 

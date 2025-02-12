@@ -1,6 +1,5 @@
 import { apiSlice } from "./apiSlice";
 import { ORDERS_URL } from "../constants";
-import { get } from "mongoose";
 
 export const orderApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
