@@ -20,16 +20,26 @@ dotenv.config();
 // Create Express app
 const app = express();
 
-// Apply CORS middleware
-app.use(cors({
-    origin: 'https://teal-taffy-af2df9.netlify.app', 
+const allowedOrigins = [
+    'https://earthifyy.vercel.app',
+    'https://teal-taffy-af2df9.netlify.app', 
+    'http://localhost:5173' // for dev
+  ]
+  
+  app.use(cors({
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true)
+      } else {
+        callback(new Error('Not allowed by CORS: ' + origin))
+      }
+    },
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    // origin: 'http://localhost:5173',
-    credentials: true, 
-}));
-
-app.options('*', cors()); // Preflight handling
-
+    credentials: true
+  }))
+  
+  // Preflight
+  app.options('*', cors())
 // Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
