@@ -1,5 +1,5 @@
-export const BASE_URL = "http://localhost:5001";
-// export const BASE_URL = 'https://earthify.onrender.com'
+// export const BASE_URL = "http://localhost:5001";
+export const BASE_URL = "https://earthify.onrender.com";
 export const USERS_URL = `${BASE_URL}/api/users`;
 export const CATEGORY_URL = `${BASE_URL}/api/category`;
 export const PRODUCTS_URL = `${BASE_URL}/api/product`;
