@@ -7,7 +7,6 @@ const PendingOrders = () => {
 
   console.log("Orders Data:", ordersData);
 
-  // Safely retrieve delivered and paid orders
   const deliveredOrders = ordersData?.orders?.delivered || [];
   const paidOrders = ordersData?.orders?.paid || [];
 
@@ -18,7 +17,6 @@ const PendingOrders = () => {
     <Navigation />
 
     <div className="container mx-auto px-6 py-8 bg-gray-100 min-h-screen">
-      {/* Loading and Error States */}
       {isLoading ? (
         <div className="flex items-center justify-center h-screen">
           <p className="text-lg text-gray-600 animate-pulse">Loading orders...</p>

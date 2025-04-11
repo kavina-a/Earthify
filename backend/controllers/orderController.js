@@ -133,77 +133,15 @@ const getCustomerOrders = asyncHandler( async( req, res) => {
     }
 })
 
-//to get all orders for a specific service provider
-// const getServiceProviderOrders = asyncHandler(async (req, res) => {
-//   try {
-//     const userId = new mongoose.Types.ObjectId(req.user._id);
-
-//     // Find service provider by user ID
-//     const serviceProvider = await ServiceProvider.findOne({ user: userId });
-//     if (!serviceProvider) {
-//       return res.status(404).json({ message: "Service Provider not found" });
-//     }
-
-//     const serviceProviderId = serviceProvider._id;
-
-//     // Fetch orders where service provider is part of orderItems
-//     const orders = await Order.find({
-//       "orderItems.seller": serviceProviderId,
-//     });
-
-//     console.log('Orders:', JSON.stringify(orders, null, 2));
-
-//     // Helper function to filter orders based on status
-//     const filterOrders = (orders, filterFn) =>
-//       orders
-//         .map((order) => ({
-//           ...order._doc, // Spread other order properties
-//           orderItems: order.orderItems.filter((item) =>
-//             item.seller.toString() === serviceProviderId.toString() && filterFn(item)
-//           ),
-//         }))
-//         .filter((order) => order.orderItems.length > 0); // Remove orders with no matching items
-
-//     // Pending orders: isConfirmed = false, isDelivered = false
-//     const pendingOrders = filterOrders(
-//       orders,
-//       (item) =>  item.isDelivered === false
-//     );
-
-//     // Confirmed orders: isConfirmed = true, isDelivered = false
-//     const confirmedOrders = filterOrders(
-//       orders,
-//       (item) =>  item.isDelivered === false
-//     );
-
-//     // Completed orders: isConfirmed = true, isDelivered = true
-//     const completedOrders = filterOrders(
-//       orders,
-//       (item) => item.isDelivered === true
-//     );
-
-//     console.log({ pendingOrders, confirmedOrders, completedOrders });
-
-//     res.json({
-//       pendingOrders,
-//       confirmedOrders,
-//       completedOrders,
-//     });
-//   } catch (error) {
-//     console.error(error);
-//     res.status(400).json({ message: 'Error getting orders', error: error.message });
-//   }
-// });
-
 const getServiceProviderOrders = asyncHandler(async (req, res) => {
   try {
     console.log("Starting getServiceProviderOrders...");
 
-    // Extract the logged-in user's ID
+    // Step 1: Get logged-in user ID
     const userId = new mongoose.Types.ObjectId(req.user._id);
     console.log("Logged-in User ID:", userId);
 
-    // Find the Service Provider
+    // Step 2: Find the Service Provider linked to this user
     const serviceProvider = await ServiceProvider.findOne({ user: userId }).select("_id");
     if (!serviceProvider) {
       console.log("Service Provider not found for User ID:", userId);
@@ -212,16 +150,16 @@ const getServiceProviderOrders = asyncHandler(async (req, res) => {
         message: "Service Provider not found.",
       });
     }
+
     const serviceProviderId = serviceProvider._id;
     console.log("Service Provider ID:", serviceProviderId);
 
-    // Fetch orders containing items related to this seller
-    console.log("Fetching orders for Service Provider ID:", serviceProviderId);
+    // Step 3: Aggregate Orders
     const sellerOrders = await Order.aggregate([
-      { $unwind: "$orderItems" }, // Break down orderItems array
+      { $unwind: "$orderItems" },
       {
         $match: {
-          "orderItems.seller": serviceProviderId, // Match the logged-in seller
+          "orderItems.seller": serviceProviderId,
         },
       },
       {
@@ -236,7 +174,7 @@ const getServiceProviderOrders = asyncHandler(async (req, res) => {
           totalPrice: { $first: "$totalPrice" },
           finalPrice: { $first: "$finalPrice" },
           isPaid: { $first: "$isPaid" },
-          isConfirmed: { $first: "$isConfrimed" },
+          isConfirmed: { $first: "$isConfirmed" }, // fixed typo
           paidAt: { $first: "$paidAt" },
           isDelivered: { $first: "$isDelivered" },
           deliveredAt: { $first: "$deliveredAt" },
@@ -284,7 +222,6 @@ const getServiceProviderOrders = asyncHandler(async (req, res) => {
       },
     ]);
 
-    // Log the intermediate result from the aggregation
     console.log("Aggregated Seller Orders:", JSON.stringify(sellerOrders, null, 2));
 
     res.status(200).json({
