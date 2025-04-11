@@ -59,8 +59,6 @@ app.use("/api/stripe", stripeRoute);
 app.use("/api/seller", sellerRoutes);
 
 // Serve static files for uploads
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
-
 // Root route
 app.get("/", (req, res) => {
   res.send("API is running");
