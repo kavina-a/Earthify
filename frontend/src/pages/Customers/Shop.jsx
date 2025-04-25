@@ -62,14 +62,13 @@ const Shop = () => {
             className="mb-6"
           >
             <video
-              src="/images/store.mp4" // Path to your video
+              src="https://res.cloudinary.com/dia9svkwh/video/upload/v1/EARTHIFYVIDEO.mp4"
               autoPlay
               loop
               muted
               playsInline
               className="w-[100%] h-[550px] object-cover"
             >
-              {/* Fallback text */}
               Your browser does not support the video tag.
             </video>
           </motion.div>

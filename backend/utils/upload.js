@@ -6,9 +6,10 @@ const cloudinary = require("../cloudinary");
 const storage = new CloudinaryStorage({
   cloudinary,
   params: {
-    folder: "uploads", // Cloudinary folder name (you can change this!)
-    allowed_formats: ["jpg", "jpeg", "png", "webp"],
-    transformation: [{ width: 800, height: 800, crop: "limit" }], // Optional: auto-resize to limit dimensions
+    folder: "uploads",
+    resource_type: "auto",
+    allowed_formats: ["jpg", "jpeg", "png", "webp", "mp4", "mov", "avi"],
+    transformation: [{ width: 800, crop: "limit" }],
   },
 });
 
