@@ -1,12 +1,21 @@
 import moment from "moment";
-import { useGetProductsBySellerQuery, useDeleteProductMutation } from "../../redux/api/productsApiSlice";
+import {
+  useGetProductsBySellerQuery,
+  useDeleteProductMutation,
+} from "../../redux/api/productsApiSlice";
 import { toast } from "react-toastify";
 import { useEffect, useState } from "react";
 import ProductUpdate from "./ProductUpdate";
 import { PencilSquareIcon, TrashIcon } from "@heroicons/react/24/outline";
 
 const AllProducts = () => {
-  const { data: products, isLoading, isError, error, refetch } = useGetProductsBySellerQuery();
+  const {
+    data: products,
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useGetProductsBySellerQuery();
   const [deleteProduct, { isSuccess }] = useDeleteProductMutation();
 
   const handleDelete = async (productId) => {
@@ -67,26 +76,28 @@ const AllProducts = () => {
     <div className="container mx-auto px-6 py-12">
       {/* Header */}
       <header className="mb-12">
-  <div className="bg-earthTone-creamyWhite shadow-lg rounded-xl p-8 flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0 md:space-x-6">
-    {/* Left Section: Text */}
-    <div className="text-center md:text-left">
-      <h1 className="text-4xl font-extrabold text-earthTone-oliveGreen tracking-tight flex items-center justify-center md:justify-start space-x-2">
-        <span>Your Product Catalog</span>
-        <span role="img" aria-label="box">📦</span>
-      </h1>
-      <p className="text-earthTone-sandstoneBeige mt-2 text-lg">Manage your products beautifully and efficiently ✨</p>
-     
-    </div>
+        <div className="bg-earthTone-creamyWhite shadow-lg rounded-xl p-8 flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0 md:space-x-6">
+          {/* Left Section: Text */}
+          <div className="text-center md:text-left">
+            <h1 className="text-4xl font-extrabold text-earthTone-oliveGreen tracking-tight flex items-center justify-center md:justify-start space-x-2">
+              <span>Your Product Catalog</span>
+              <span role="img" aria-label="box">
+                📦
+              </span>
+            </h1>
+            <p className="text-earthTone-sandstoneBeige mt-2 text-lg">
+              Manage your products beautifully and efficiently ✨
+            </p>
+          </div>
 
-    <div className="flex space-x-4">
-      <div className="bg-earthTone-sandstoneBeige text-earthTone-oliveGreen rounded-lg p-4 shadow-md text-center w-32">
-        <p className="text-sm font-bold">PRODUCTS</p>
-        <p className="text-2xl font-bold">{products.length}</p>
-      </div>
-      
-    </div>
-  </div>
-</header>
+          <div className="flex space-x-4">
+            <div className="bg-earthTone-sandstoneBeige text-earthTone-oliveGreen rounded-lg p-4 shadow-md text-center w-32">
+              <p className="text-sm font-bold">PRODUCTS</p>
+              <p className="text-2xl font-bold">{products.length}</p>
+            </div>
+          </div>
+        </div>
+      </header>
 
       {/* Product Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
@@ -98,7 +109,7 @@ const AllProducts = () => {
             {/* Product Image */}
             <div className="relative">
               <img
-                src={`http://localhost:5001${product.image}`}
+                src={product.image}
                 alt={product.name}
                 className="h-48 w-full object-cover rounded-t-xl"
               />
@@ -109,16 +120,19 @@ const AllProducts = () => {
 
             {/* Product Details */}
             <div className="p-5 flex-grow">
-              <h3 className="text-lg font-semibold text-earthTone-oliveGreen mb-1 truncate">{product.name}</h3>
+              <h3 className="text-lg font-semibold text-earthTone-oliveGreen mb-1 truncate">
+                {product.name}
+              </h3>
               <p className="text-earthTone-sandstoneBeige text-sm mb-3">
                 {product.description?.substring(0, 80)}
               </p>
-             
             </div>
 
             {/* Actions */}
             <div className="p-4 bg-earthTone-sandstoneBeige border-t border-earthTone flex justify-between items-center">
-              <p className="text-lg font-bold text-earthTone-oliveGreen">$ {product.price}</p>
+              <p className="text-lg font-bold text-earthTone-oliveGreen">
+                $ {product.price}
+              </p>
               <div className="flex space-x-2">
                 {/* Update Button */}
                 <button
