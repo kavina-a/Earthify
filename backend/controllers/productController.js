@@ -22,12 +22,10 @@ const createProduct = asyncHandler(async (req, res) => {
     const imagePublicId = req.file.filename; // ✅ Cloudinary public_id
 
     if (!name || !description || !price || !countInStock || !image) {
-      return res
-        .status(400)
-        .json({
-          error:
-            "All fields (name, description, price, image, etc.) are required",
-        });
+      return res.status(400).json({
+        error:
+          "All fields (name, description, price, image, etc.) are required",
+      });
     }
 
     // Get seller ID from authenticated user
@@ -223,11 +221,9 @@ const getProductsByCategory = asyncHandler(async (req, res) => {
     res.json(products);
   } catch (error) {
     console.error(error);
-    res
-      .status(500)
-      .json({
-        message: `Error when getting products by category: ${error.message}`,
-      });
+    res.status(500).json({
+      message: `Error when getting products by category: ${error.message}`,
+    });
   }
 });
 
