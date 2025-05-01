@@ -4,12 +4,13 @@ import { useDispatch } from "react-redux";
 import { addToCart } from "../../redux/features/cart/cartSlice";
 import { toast } from "react-toastify";
 
-import { useAddToFavoritesMutation } from "../../redux//api/productsApiSlice"; 
+import { useAddToFavoritesMutation } from "../../redux//api/productsApiSlice";
 
 const ProductCard = ({ p }) => {
   const dispatch = useDispatch();
-  
-  const [addProductToFavorites, { isLoading: isAddingToFavorites }] = useAddToFavoritesMutation();
+
+  const [addProductToFavorites, { isLoading: isAddingToFavorites }] =
+    useAddToFavoritesMutation();
 
   // Handler for add to cart
   const addToCartHandler = (product, quantity) => {
@@ -22,7 +23,7 @@ const ProductCard = ({ p }) => {
   // Handler for add to favorites
   const handleAddToFavorites = async (productId) => {
     try {
-      console.log(productId)
+      console.log(productId);
       await addProductToFavorites(productId).unwrap();
       console.log("Product added to favorites!");
       toast.success("Product added to favorites!");
@@ -35,7 +36,7 @@ const ProductCard = ({ p }) => {
   return (
     <Link
       to={`/customer/product/${p._id}`}
-      className="block max-w-sm relative bg-mutedPalette-mutedBlue text-mutedPalette-beige rounded-lg shadow-lg transform hover:scale-105 transition-transform duration-300"
+      className=" max-w-sm relative h-auto bg-mutedPalette-mutedBlue text-mutedPalette-beige rounded-lg transform hover:scale-105 transition-transform duration-300"
     >
       {/* Product Image Section */}
       <section className="relative group">
@@ -49,7 +50,7 @@ const ProductCard = ({ p }) => {
           disabled={isAddingToFavorites}
           className="absolute top-3 left-3 bg-mutedPalette-softTan p-2 rounded-full shadow-lg hover:bg-mutedPalette-beige transition-colors duration-300"
         >
-          <AiOutlineHeart className="text-mutedPalette-beige" size={20} />
+          <AiOutlineHeart className="text-mutedPalette-mutedBlue" size={20} />
         </button>
 
         <span className="absolute top-3 right-3 bg-mutedPalette-softTan text-mutedPalette-beige text-xs font-medium px-2.5 py-0.5 rounded-full shadow-lg">
@@ -66,7 +67,9 @@ const ProductCard = ({ p }) => {
       <div className="p-4">
         <div className="flex justify-between items-center">
           {/* Product Name */}
-          <h5 className="text-lg font-semibold text-mutedPalette-beige">{p?.name}</h5>
+          <h5 className="text-lg font-semibold text-mutedPalette-mutedBlue">
+            {p?.name}
+          </h5>
 
           {/* Product Price */}
           <p className="text-mutedPalette-dustyMauve font-bold">
