@@ -38,8 +38,16 @@ const Navigation = () => {
     { to: "/customer/home", icon: <Home size={24} />, label: "Home" },
     { to: "/customer/shop", icon: <ShoppingBag size={24} />, label: "Shop" },
     { to: "/customer/cart", icon: <ShoppingCart size={24} />, label: "Cart" },
-    { to: "/customer/favorites", icon: <Heart size={24} />, label: "Favorites" },
-    { to: "/customer/orders", icon: <ListOrdered size={24} />, label: "Orders" }
+    {
+      to: "/customer/favorites",
+      icon: <Heart size={24} />,
+      label: "Favorites",
+    },
+    {
+      to: "/customer/orders",
+      icon: <ListOrdered size={24} />,
+      label: "Orders",
+    },
   ];
 
   return (
@@ -47,10 +55,10 @@ const Navigation = () => {
       style={{ zIndex: 9999 }}
       className={`${
         showSidebar ? "hidden" : "flex"
-      } xl:flex lg:flex md:hidden sm:hidden flex-col justify-between p-4 bg-white backdrop-blur-lg text-black w-[5%] hover:w-[15%] h-[100vh] fixed transition-all duration-500 ease-in-out shadow-xl rounded-r-xl border-r border-gray-200`}
+      } xl:flex lg:flex md:hidden  sm:hidden flex-col justify-between p-4 bg-white backdrop-blur-lg text-black w-[5%] hover:w-[15%] h-[100vh] fixed transition-all duration-500 ease-in-out shadow-xl rounded-r-xl border-r border-gray-200`}
     >
       {/* Top Navigation Items */}
-      <div className="flex flex-col mt-6 space-y-6">
+      <div className="flex flex-col mt-6 space-y-12">
         {navItems.map((item, index) => (
           <Link
             key={index}
@@ -84,22 +92,69 @@ const Navigation = () => {
                 viewBox="0 0 24 24"
                 stroke="currentColor"
               >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M19 9l-7 7-7-7"
+                />
               </svg>
             </button>
 
             {dropdownOpen && (
-              <ul className="absolute right-0 mt-3 w-48 bg-white text-black rounded-lg shadow-lg overflow-hidden font-semibold">
+              <ul className="absolute bottom-full mb-2 left-0 w-52 bg-white border border-gray-200 rounded-lg shadow-xl z-50 text-sm">
                 {userInfo.isAdmin && (
                   <>
-                    <li><Link to="/admin/dashboard" className="block px-4 py-2 hover:bg-gray-100">Dashboard</Link></li>
-                    <li><Link to="/admin/productlist" className="block px-4 py-2 hover:bg-gray-100">Products</Link></li>
-                    <li><Link to="/admin/categorylist" className="block px-4 py-2 hover:bg-gray-100">Category</Link></li>
-                    <li><Link to="/admin/orderlist" className="block px-4 py-2 hover:bg-gray-100">Orders</Link></li>
-                    <li><Link to="/admin/userlist" className="block px-4 py-2 hover:bg-gray-100">Users</Link></li>
+                    <li>
+                      <Link
+                        to="/admin/dashboard"
+                        className="block px-4 py-2 hover:bg-gray-100"
+                      >
+                        Dashboard
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        to="/admin/productlist"
+                        className="block px-4 py-2 hover:bg-gray-100"
+                      >
+                        Products
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        to="/admin/categorylist"
+                        className="block px-4 py-2 hover:bg-gray-100"
+                      >
+                        Category
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        to="/admin/orderlist"
+                        className="block px-4 py-2 hover:bg-gray-100"
+                      >
+                        Orders
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        to="/admin/userlist"
+                        className="block px-4 py-2 hover:bg-gray-100"
+                      >
+                        Users
+                      </Link>
+                    </li>
                   </>
                 )}
-                <li><Link to="/profile" className="block px-4 py-2 hover:bg-gray-100">Profile</Link></li>
+                <li>
+                  <Link
+                    to="/profile"
+                    className="block px-4 py-2 hover:bg-gray-100"
+                  >
+                    Profile
+                  </Link>
+                </li>
                 <li>
                   <button
                     onClick={logoutHandler}
@@ -113,13 +168,29 @@ const Navigation = () => {
           </div>
         ) : (
           <div className="space-y-4">
-            <Link to="/login" className="flex items-center group p-2 rounded-lg hover:bg-gray-100 transition-all duration-300">
-              <AiOutlineLogin className="group-hover:text-black font-bold" size={22} />
-              <span className="hidden group-hover:inline-block ml-3 text-sm uppercase text-black font-bold">Login</span>
+            <Link
+              to="/login"
+              className="flex items-center group p-2 rounded-lg hover:bg-gray-100 transition-all duration-300"
+            >
+              <AiOutlineLogin
+                className="group-hover:text-black font-bold"
+                size={22}
+              />
+              <span className="hidden group-hover:inline-block ml-3 text-sm uppercase text-black font-bold">
+                Login
+              </span>
             </Link>
-            <Link to="/register" className="flex items-center group p-2 rounded-lg hover:bg-gray-100 transition-all duration-300">
-              <AiOutlineUserAdd className="group-hover:text-black font-bold" size={22} />
-              <span className="hidden group-hover:inline-block ml-3 text-sm uppercase text-black font-bold">Register</span>
+            <Link
+              to="/register"
+              className="flex items-center group p-2 rounded-lg hover:bg-gray-100 transition-all duration-300"
+            >
+              <AiOutlineUserAdd
+                className="group-hover:text-black font-bold"
+                size={22}
+              />
+              <span className="hidden group-hover:inline-block ml-3 text-sm uppercase text-black font-bold">
+                Register
+              </span>
             </Link>
           </div>
         )}
